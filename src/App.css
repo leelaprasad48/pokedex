@@ -1,17 +1,30 @@
-.infiniteScroll{
+.infiniteScroll {
     width: 100% !important;
 }
 
-.semi{
+.semi {
     display: inline-block;
     margin: 16px !important;
     width: auto;
 }
-.container-fluid{
+
+.container-fluid {
     background-color: cornflowerblue;
 }
 
-.badge{
+.badge {
     margin-right: 5px;
     margin-bottom: 5px;
+}
+
+.badge-statType {
+    background-color: #a2ef44;
+}
+
+.badge-statValue {
+    background-color: #ff0000;
+}
+
+.badge-type {
+    background-color: #02c39a;
 }
