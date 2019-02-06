@@ -28,3 +28,9 @@
 .badge-type {
     background-color: #02c39a;
 }
+
+.like-button{
+    cursor: pointer;
+    padding-left: 20px;
+    padding-right: 20px;
+}

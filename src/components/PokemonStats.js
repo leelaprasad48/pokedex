@@ -3,7 +3,7 @@ import React from 'react';
 function PokemonStats(props) {
     let res = props.stats;
     return (
-        <table className="table">
+        <table className="table" key={res.id}>
             <tbody>
             <tr>
                 <td>Id</td>
@@ -15,8 +15,8 @@ function PokemonStats(props) {
             </tr>
             <tr>
                 <td>Type</td>
-                <td>{res.types.map(typeType => {
-                    return (<span className="badge badge-type">{typeType.type.name}</span>)
+                <td key={res.id}>{res.types.map(typeType => {
+                    return (<span key={res.id + typeType.type.name} className="badge badge-type">{typeType.type.name}</span>)
                 })}</td>
             </tr>
             <tr>
@@ -26,7 +26,7 @@ function PokemonStats(props) {
                         <tbody>
                         {res.stats.map(statType => {
                             return (
-                                <tr>
+                                <tr key={res.id +statType.stat.name}>
                                     <td><span className="badge badge-statType">{statType.stat.name}</span></td>
                                     <td><span className="badge badge-statValue">{statType.base_stat}</span></td>
                                 </tr>
@@ -47,13 +47,13 @@ function PokemonStats(props) {
             <tr>
                 <td>Moves</td>
                 <td>{res.moves.map(moveType => {
-                    return (<span className="badge badge-pill badge-info">{moveType.move.name}</span>)
+                    return (<span key={res.id + moveType.move.name} className="badge badge-pill badge-info">{moveType.move.name}</span>)
                 })}</td>
             </tr>
             <tr>
                 <td>Abilities</td>
                 <td>{res.abilities.map(abilityType => {
-                    return (<span className="badge badge-success">{abilityType.ability.name}</span>)
+                    return (<span key={res.id + abilityType.ability.name} className="badge badge-success">{abilityType.ability.name}</span>)
                 })}</td>
             </tr>
             </tbody>

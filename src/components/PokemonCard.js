@@ -1,11 +1,6 @@
 import React from 'react';
 import {Loading} from "./LoadingComponent";
 import PokemonStats from './PokemonStats';
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import '../App.css';
@@ -18,7 +13,9 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import withStyles from "@material-ui/core/es/styles/withStyles";
 import IconButton from '@material-ui/core/IconButton';
+import CrossIcon from '../assets/svg/crossIcon.svg';
 import axios from 'axios';
+import PokemonDetail from "./PokemonDetail";
 
 
 const mapStateToProps = state => {
@@ -54,7 +51,7 @@ const DialogTitle = withStyles(theme => ({
             <Typography variant="h6">{children}</Typography>
             {onClose ? (
                 <IconButton aria-label="Close" className={classes.closeButton} onClick={onClose}>
-                    <span>Close</span>
+                    <img src={CrossIcon} alt="Close"/>
                 </IconButton>
             ) : null}
         </MuiDialogTitle>
@@ -84,7 +81,8 @@ class RenderPokemon extends React.Component {
             open: false,
             selectedPokemonId: undefined,
             selectedPokemonName: undefined,
-            selectedPokemonResponse: undefined
+            selectedPokemonResponse: undefined,
+            isFav: false
         };
     }
 
@@ -95,7 +93,7 @@ class RenderPokemon extends React.Component {
         this.setState({
             open: true,
             selectedPokemonId: id,
-            selectedPokemonName: name
+            selectedPokemonName: name,
         });
 
     };
@@ -104,48 +102,26 @@ class RenderPokemon extends React.Component {
         this.setState({open: false});
     };
 
+    toggleFav = () => {
+        this.setState({isFav: !this.state.isFav}, () => {
+            console.log("fav toggled ", this.state.isFav);
+        })
+    };
+
     addToFav = () => {
         console.log("add to fav " + this.state.selectedPokemonId);
         this.handleClose();
     };
 
     render() {
-        console.log(this.state.selectedPokemonResponse);
         return (
             <div className="semi">
                 {this.props.isLoading && (<Loading/>)}
                 {this.props.errMess && (<h4>{this.props.errMess}</h4>)}
                 {this.props.pokemonList && (this.props.pokemonList.map(pokemon => {
                     return (
-                        <Card className="semi" key={pokemon.id}>
-                            <CardActionArea>
-                                <CardMedia
-                                    component="img"
-                                    className="wf"
-                                    height="140"
-                                    image={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/` + pokemon.id + `.png`}
-                                    title={pokemon.name}
-                                />
-                                <CardContent>
-                                    <Typography gutterBottom variant="headline" component="h2">
-                                        {pokemon.name}
-                                    </Typography>
-                                    <Typography component="p">
-                                        {/*{pokemon.url}*/}
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                            <CardActions>
-                                <Button size="small" color="primary">
-                                    Like
-                                </Button>
-                                <Button size="small" color="secondary" margin="normal" onClick={() => {
-                                    this.knowMore(pokemon.id, pokemon.name)
-                                }}>
-                                    More
-                                </Button>
-                            </CardActions>
-                        </Card>
+                        <PokemonDetail key={pokemon.id} pokemon={pokemon} toggleFav={this.toggleFav}
+                                       knowMore={this.knowMore} isFav={this.state.isFav}/>
                     );
                 }))}
                 <Dialog
@@ -157,11 +133,11 @@ class RenderPokemon extends React.Component {
                         {this.state.selectedPokemonName}
                     </DialogTitle>
                     <DialogContent>
-                        <Typography gutterBottom>
+                        <div>
                             {this.state.selectedPokemonResponse && (
                                 <PokemonStats stats={this.state.selectedPokemonResponse}/>
                             )}
-                        </Typography>
+                        </div>
 
                     </DialogContent>
                     <DialogActions>
