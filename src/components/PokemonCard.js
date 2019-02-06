@@ -2,20 +2,18 @@ import React from 'react';
 import {Loading} from "./LoadingComponent";
 import PokemonStats from './PokemonStats';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
 import '../App.css';
 import {fetchPokemons} from "../redux/ActionCreators";
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {connect} from "react-redux";
 import Dialog from '@material-ui/core/Dialog';
-import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import MuiDialogActions from '@material-ui/core/DialogActions';
 import withStyles from "@material-ui/core/es/styles/withStyles";
-import IconButton from '@material-ui/core/IconButton';
-import CrossIcon from '../assets/svg/crossIcon.svg';
 import axios from 'axios';
 import PokemonDetail from "./PokemonDetail";
+import PokemonImages from './PokemonImages';
+import DialogTitle from './DialogTitle';
 
 
 const mapStateToProps = state => {
@@ -30,32 +28,6 @@ const mapDispatchToProps = (dispatch) => ({
     fetchPokemonList: (offSet) => {
         dispatch(fetchPokemons('https://pokeapi.co/api/v2/pokemon/?limit=50&offset=' + offSet))
     }
-});
-
-const DialogTitle = withStyles(theme => ({
-    root: {
-        borderBottom: `1px solid ${theme.palette.divider}`,
-        margin: 0,
-        padding: theme.spacing.unit * 2,
-    },
-    closeButton: {
-        position: 'absolute',
-        right: theme.spacing.unit,
-        top: theme.spacing.unit,
-        color: theme.palette.grey[500],
-    },
-}))(props => {
-    const {children, classes, onClose} = props;
-    return (
-        <MuiDialogTitle disableTypography className={classes.root}>
-            <Typography variant="h6">{children}</Typography>
-            {onClose ? (
-                <IconButton aria-label="Close" className={classes.closeButton} onClick={onClose}>
-                    <img src={CrossIcon} alt="Close"/>
-                </IconButton>
-            ) : null}
-        </MuiDialogTitle>
-    );
 });
 
 const DialogContent = withStyles(theme => ({
@@ -82,7 +54,8 @@ class RenderPokemon extends React.Component {
             selectedPokemonId: undefined,
             selectedPokemonName: undefined,
             selectedPokemonResponse: undefined,
-            isFav: false
+            showMoreImages: false,
+            imageResponse: undefined
         };
     }
 
@@ -93,19 +66,18 @@ class RenderPokemon extends React.Component {
         this.setState({
             open: true,
             selectedPokemonId: id,
-            selectedPokemonName: name,
+            selectedPokemonName: name
         });
+    };
 
+    loadImages = (id) => {
+        axios.get(`https://pokeapi.co/api/v2/pokemon/${id}/`).then(response => {
+            this.setState({showMoreImages: true, imageResponse: response.data.sprites})
+        });
     };
 
     handleClose = () => {
-        this.setState({open: false});
-    };
-
-    toggleFav = () => {
-        this.setState({isFav: !this.state.isFav}, () => {
-            console.log("fav toggled ", this.state.isFav);
-        })
+        this.setState({open: false, showMoreImages: false});
     };
 
     addToFav = () => {
@@ -118,10 +90,9 @@ class RenderPokemon extends React.Component {
             <div className="semi">
                 {this.props.isLoading && (<Loading/>)}
                 {this.props.errMess && (<h4>{this.props.errMess}</h4>)}
-                {this.props.pokemonList && (this.props.pokemonList.map(pokemon => {
+                {this.props.pokemonList && (this.props.pokemonList.map((pokemon, i) => {
                     return (
-                        <PokemonDetail key={pokemon.id} pokemon={pokemon} toggleFav={this.toggleFav}
-                                       knowMore={this.knowMore} isFav={this.state.isFav}/>
+                        <PokemonDetail key={i} pokemon={pokemon} knowMore={this.knowMore} loadImages={this.loadImages}/>
                     );
                 }))}
                 <Dialog
@@ -138,13 +109,21 @@ class RenderPokemon extends React.Component {
                                 <PokemonStats stats={this.state.selectedPokemonResponse}/>
                             )}
                         </div>
-
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this.addToFav} color="primary">
                             Add to Fav
                         </Button>
                     </DialogActions>
+                </Dialog>
+                <Dialog
+                    open={this.state.showMoreImages}
+                    onClose={this.handleClose}
+                    aria-labelledby="alert-dialog-title"
+                >
+                    <DialogContent>
+                        <PokemonImages images={this.state.imageResponse}/>
+                    </DialogContent>
                 </Dialog>
             </div>
         );

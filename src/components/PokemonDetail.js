@@ -9,33 +9,49 @@ import Button from '@material-ui/core/Button';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 
-function PokemonDetail(props) {
-    let response = props.pokemon;
-    return(
-        <Card className="semi" key={response.id}>
-            <CardActionArea>
-                <CardMedia
-                    component="img"
-                    className="wf"
-                    height="140"
-                    image={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/` + response.id + `.png`}
-                    title={response.name}
-                />
-                <CardContent>
-                    <Typography gutterBottom variant="headline" component="h2">
-                        {response.name}
-                    </Typography>
-                </CardContent>
-            </CardActionArea>
-            <CardActions>
-                <img className="like-button" src={props.isFav ? HeartFill : HeartEmpty} onClick={props.toggleFav} alt="fav" />
-                <Button size="small" color="secondary" margin="normal" onClick={() => {
-                    props.knowMore(response.id, response.name)
+class PokemonDetail extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            isFav: false
+        }
+    }
+
+    toggleFav = (id) => {
+        this.setState({isFav: !this.state.isFav}, () => {
+            console.log(id + this.state.isFav)
+        })
+    };
+
+    render(){
+        let response = this.props.pokemon;
+        return(
+            <Card className="semi" key={response.id}>
+                <CardActionArea onClick={() => {
+                    this.props.loadImages(response.id, response.name)
                 }}>
-                    More
-                </Button>
-            </CardActions>
-        </Card>
-    );
+                    <CardMedia
+                        component="img"
+                        image={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/` + response.id + `.png`}
+                        title={response.name}
+                    />
+                    <CardContent>
+                        <Typography gutterBottom variant="headline" component="h2">
+                            {response.name}
+                        </Typography>
+                    </CardContent>
+                </CardActionArea>
+                <CardActions>
+                    <img className="like-button" src={this.state.isFav ? HeartFill : HeartEmpty} onClick={() => {this.toggleFav(response.id)}} alt="fav" />
+                    <Button size="small" color="primary" margin="normal" onClick={() => {
+                        this.props.knowMore(response.id, response.name)
+                    }}>
+                        More
+                    </Button>
+                </CardActions>
+            </Card>
+        );
+
+    }
 }
 export default PokemonDetail;
