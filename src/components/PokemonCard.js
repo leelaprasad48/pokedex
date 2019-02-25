@@ -14,6 +14,7 @@ import axios from 'axios';
 import PokemonDetail from "./PokemonDetail";
 import PokemonImages from './PokemonImages';
 import DialogTitle from './DialogTitle';
+import {NavLink} from 'react-router-dom';
 
 
 const mapStateToProps = state => {
@@ -82,7 +83,9 @@ class RenderPokemon extends React.Component {
 
     addToFav = () => {
         console.log("add to fav " + this.state.selectedPokemonId);
-        this.handleClose();
+        return(<NavLink exact to={'/pokemon/3'}></NavLink>);
+        // this.handleClose();
+
     };
 
     render() {
@@ -150,6 +153,7 @@ class PokemonCard extends React.Component {
     };
 
     render() {
+        console.log(this.props.pokemonList);
         return (
             <div className="">
                 <InfiniteScroll
@@ -171,5 +175,7 @@ class PokemonCard extends React.Component {
         );
     }
 }
+
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(PokemonCard);

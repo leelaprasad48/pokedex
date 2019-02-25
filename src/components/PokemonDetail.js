@@ -8,6 +8,14 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import {connect} from "react-redux";
+import {pokemonLiked} from "../redux/ActionCreators";
+
+const mapDispatchToProps = (dispatch) => ({
+    addFav: (id) => {
+        dispatch(pokemonLiked(id))
+    }
+});
 
 class PokemonDetail extends React.Component{
     constructor(props){
@@ -18,9 +26,8 @@ class PokemonDetail extends React.Component{
     }
 
     toggleFav = (id) => {
-        this.setState({isFav: !this.state.isFav}, () => {
-            console.log(id + this.state.isFav)
-        })
+        this.setState({isFav: !this.state.isFav});
+        // this.props.addFav(id);
     };
 
     render(){
@@ -54,4 +61,4 @@ class PokemonDetail extends React.Component{
 
     }
 }
-export default PokemonDetail;
+export default connect(null, mapDispatchToProps)(PokemonDetail);

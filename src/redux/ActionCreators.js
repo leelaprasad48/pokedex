@@ -7,6 +7,7 @@ export const fetchPokemons = (url) => (dispatch) => {
         response.data.results.forEach(result => {
             let { url } = result;
             result.id = url.substring(34, url.length - 1);
+            result.isFav = false;
         });
         return response.data.results;
     })
@@ -26,4 +27,9 @@ export const pokemonsFailed = (errmess) => ({
 export const addPokemon = (pokemon) => ({
     type: ActionTypes.ADD_POKEMONS,
     payload: pokemon
+});
+
+export const pokemonLiked = (pokemonId) => ({
+    type: ActionTypes.POKEMON_LIKED,
+    payload: pokemonId
 });

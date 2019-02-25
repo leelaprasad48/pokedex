@@ -10,10 +10,13 @@ export const Pokemons = (state = {
             return {...state, pokemonList: state.pokemonList.concat(action.payload), isLoading: false, errMess: null};
 
         case ActionTypes.POKEMONS_LOADING:
-            return {...state, isLoading: true, errMess: null, pokemonList: []};
+            return {...state, isLoading: true, errMess: null};
 
         case ActionTypes.POKEMONS_FAILED:
-            return {...state, isLoading: false, errMess: action.payload, pokemonList: []};
+            return {...state, isLoading: false, errMess: action.payload};
+
+        case ActionTypes.POKEMON_LIKED:
+            return {...state, pokemonList: state.pokemonList.map(pokemon => (pokemon.id === action.payload) ? { isFav: !pokemon.isFav} : {isFav: pokemon.isFav})};
 
         default:
             return state;
